@@ -13,6 +13,7 @@ import BarChart from './widgets/BarChart';
 import LineChart from './widgets/LineChart';
 import DoughnutChart from './widgets/DoughnutChart';
 import ComponentGraph from './widgets/ComponentGraph';
+import ComponentTable from './widgets/ComponentTable';
 
 // We are using bootstrap as the UI library
 import 'bootstrap/dist/css/bootstrap.css';
@@ -37,6 +38,10 @@ class App extends Component {
           type: ComponentGraph,
           title: 'VTS Component Flow Chart',
         },
+        ComponentTableWidget: {
+          type: ComponentTable,
+          title: 'VTS Component Host Table',
+        },
         PerformanceWidget: {
           type: DoughnutChart,
           title: 'Visa Direct Status',
@@ -55,17 +60,24 @@ class App extends Component {
           }],
         }, {
           columns: [{
-            className: 'col-md-8 col-sm-8 col-xs-8',
-            widgets: [{key: 'EngineTelemetricsWidget'}],
-          }, {
             className: 'col-md-4 col-sm-4 col-xs-4',
             widgets: [{key: 'PerformanceWidget'}],
-          }],
+          }, {
+            className: 'col-md-4 col-sm-4 col-xs-4',
+            widgets: [{key: 'EngineTelemetricsWidget'}],
+          }
+          ],
         }, {
           columns: [{
             className: 'col-md-8 col-sm-8 col-xs-8',
             widgets: [{key: 'ShipVitalTelemetricsWidget'}],
           }],
+        }, {
+          columns: [{
+              className: 'col-md-8 col-sm-8 col-xs-8',
+              // widgets: [{key: 'EngineTelemetricsWidget'}],
+              widgets: [{key: 'ComponentTableWidget'}],
+          }]
         }
 
         ],

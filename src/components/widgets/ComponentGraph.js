@@ -4,6 +4,8 @@ import fetch from 'isomorphic-fetch';
 
 import rectangle from '../../assets/rectangle.png';
 import webservice from '../../assets/web-services.png';
+import cbp from '../../assets/orange-cbp2.png';
+import checkout from '../../assets/light-blue.png';
 
 
 const graph = {
@@ -63,7 +65,6 @@ const options = {
   },
   edges: {
     color: 'green',
-    size: 6,
     // arrows: {to: {enabled: false, scaleFactor: 0.5}}, // remove arrows
   },
 };
@@ -113,7 +114,7 @@ function createNodes(devices) {
       devices[i].y = -80;
       break;
     case 'CBP':
-      devices[i].image = rectangle;
+      devices[i].image = cbp;
       devices[i].x = 220;
       devices[i].y = -80;
       break;
@@ -133,7 +134,7 @@ function createNodes(devices) {
       devices[i].y = 40;
       break;
     case 'checkout-widget':
-      devices[i].image = rectangle;
+      devices[i].image = checkout;
       devices[i].x = -40;
       devices[i].y = 180;
       break;
