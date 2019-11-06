@@ -29,7 +29,7 @@ ns.update = function(el, state, dispatcher) {
   var scales = this._scales(el, state.domain);
   var prevScales = this._scales(el, state.prevDomain);
   // this._drawPoints(el, scales, state.data, prevScales, dispatcher);
-  this._drawBalls(el, scales, state.data, prevScales, dispatcher);
+  this._drawBalls(el, scales, state.data, prevScales, dispatcher);  
 };
 
 ns._scales = function(el, domain) {
@@ -101,6 +101,10 @@ ns._drawPoints = function(el, scales, data, prevScales, dispatcher) {
 };
 
 ns._drawBalls = function (el, scales, data, prevScales, dispatcher) {
+  this.Draw(el, scales, data, prevScales);
+}
+
+ns._initBalls = function (data) {
   let {
     x,
     y,
@@ -108,7 +112,7 @@ ns._drawBalls = function (el, scales, data, prevScales, dispatcher) {
     color,
     aoa,
     weight
-  } = data;  
+  } = data;
 
   this.posX = x; // cx
   this.posY = y; // cy
@@ -138,8 +142,6 @@ ns._drawBalls = function (el, scales, data, prevScales, dispatcher) {
   this.initialVy = this.vy;
   this.initialPosX = this.posX;
   this.initialPosY = this.posY;
-
-  this.Draw(el, scales, data, prevScales); 
 }
 
 ns.Draw = function(el, scales, data, prevScales) {
@@ -186,7 +188,7 @@ ns.Draw = function(el, scales, data, prevScales) {
   if (prevScales) {
     point.exit()
       .transition()
-      .duration(ANIMATION_DURATION)
+      // .duration(ANIMATION_DURATION)
       .attr('cx', function (d) {
         return scales.x(d.x);
       })
@@ -200,5 +202,47 @@ ns.Draw = function(el, scales, data, prevScales) {
 ns.destroy = function(el) {
 
 };
+
+ns.Move = function(el, scales, thisobj, prevScales) {
+  var svg = d3.select(el).selectAll('.d3-points');
+  //thisobj.posX += Math.cos(thisobj.aoa) * thisobj.jumpSize;
+  //thisobj.posY += Math.sin(thisobj.aoa) * thisobj.jumpSize;
+
+  thisobj.posX += thisobj.vx;
+  thisobj.posY += thisobj.vy;
+
+  if (parseInt(svg.attr('width')) <= (thisobj.posX + thisobj.radius)) {
+    thisobj.posX = parseInt(svg.attr('width')) - thisobj.radius - 1;
+    thisobj.aoa = Math.PI - thisobj.aoa;
+    thisobj.vx = -thisobj.vx;
+  }
+
+  if (thisobj.posX < thisobj.radius) {
+    thisobj.posX = thisobj.radius + 1;
+    thisobj.aoa = Math.PI - thisobj.aoa;
+    thisobj.vx = -thisobj.vx;
+  }
+
+  if (parseInt(svg.attr('height')) < (thisobj.posY + thisobj.radius)) {
+    thisobj.posY = parseInt(svg.attr('height')) - thisobj.radius - 1;
+    thisobj.aoa = 2 * Math.PI - thisobj.aoa;
+    thisobj.vy = -thisobj.vy;
+  }
+
+  if (thisobj.posY < thisobj.radius) {
+    thisobj.posY = thisobj.radius + 1;
+    thisobj.aoa = 2 * Math.PI - thisobj.aoa;
+    thisobj.vy = -thisobj.vy;
+  }
+
+  // **** NOT USING AOA except during initilization. Just left this for future reference ***** 
+  if (thisobj.aoa > 2 * Math.PI)
+    thisobj.aoa = thisobj.aoa - 2 * Math.PI;
+  if (thisobj.aoa < 0)
+    thisobj.aoa = 2 * Math.PI + thisobj.aoa;
+
+  // thisobj.Draw();
+    this.Draw(el, scales, thisobj, prevScales);
+}
 
 module.exports = ns;
