@@ -7,7 +7,10 @@ var dataGenerator = require('./dataGenerator');
 
 var Pagination = require('./Pagination');
 var Chart = require('./Chart');
+var BallChart = require('./BallChart');
 var Stats = require('./Stats');
+
+
 var ShowHideTooltips = require('./ShowHideTooltips');
 var AddRemoveDatum = require('./AddRemoveDatum');
 
@@ -25,7 +28,7 @@ var App = React.createClass({
     };
   },
 
-  _allData: dataGenerator.generate(50),
+  _allData: dataGenerator.generate(25),
 
   getData: function(domain) {
     return _.filter(this._allData, this.isInDomain.bind(null, domain));
@@ -51,23 +54,12 @@ var App = React.createClass({
   render: function() {
     return (
       <div className="App">
-        <Pagination
+        {/* <Chart
           appState={this.state}
-          setAppState={this.setAppState}
-          getData={this.getData} />
-        <Chart
-          appState={this.state}
-          setAppState={this.setAppState} />
-        <Stats data={this.state.data} />
-        <ShowHideTooltips
-          appState={this.state}
-          setAppState={this.setAppState} />
-        <AddRemoveDatum
-          appState={this.state}
-          setAppState={this.setAppState}
-          addDatum={this.addDatum}
-          removeDatum={this.removeDatum} />
+          setAppState={this.setAppState} />           */}
+          <BallChart />
       </div>
+      
     );
   },
 

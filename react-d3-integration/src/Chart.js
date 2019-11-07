@@ -10,8 +10,8 @@ require('./Chart.less');
 var Chart = React.createClass({
   getDefaultProps: function() {
     return {
-      width: '100%',
-      height: '300px'
+      width: '800px',
+      height: '600px'
     };
   },
 
@@ -23,9 +23,10 @@ var Chart = React.createClass({
       width: this.props.width,
       height: this.props.height
     }, this.getChartState());
-    dispatcher.on('point:mouseover', this.showTooltip);
-    dispatcher.on('point:mouseout', this.hideTooltip);
+    // dispatcher.on('point:mouseover', this.showTooltip);
+    // dispatcher.on('point:mouseout', this.hideTooltip);
     this.dispatcher = dispatcher;
+    
   },
 
   componentDidUpdate: function(prevProps, prevState) {
@@ -51,30 +52,7 @@ var Chart = React.createClass({
     return (
       <div className="Chart"></div>
     );
-  },
-
-  showTooltip: function(d) {
-    if (this.props.appState.showingAllTooltips) {
-      return;
-    }
-
-    this.props.setAppState({
-      tooltip: d,
-      // Disable animation
-      prevDomain: null
-    });
-  },
-
-  hideTooltip: function() {
-    if (this.props.appState.showingAllTooltips) {
-      return;
-    }
-    
-    this.props.setAppState({
-      tooltip: null,
-      prevDomain: null
-    });
-  }
+  } 
 });
 
 module.exports = Chart;

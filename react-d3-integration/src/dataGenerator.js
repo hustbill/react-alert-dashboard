@@ -16,6 +16,9 @@ ns.generate = function(n) {
   }
   return res;
 };
+/*
+balls.push(new Ball(svg, 51, 31, 'n2', 'green', Math.PI / 3, 20));
+*/
 
 ns.generateDatum = function(domain) {
   return {
@@ -23,6 +26,9 @@ ns.generateDatum = function(domain) {
     x: this._randomIntBetween(domain[0], domain[1]),
     y: this._randomIntBetween(Y_MIN, Y_MAX),
     z: this._randomIntBetween(Z_MIN, Z_MAX),
+    color: '#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6),
+    aoa: Math.PI / Math.round(Math.random() * 10),
+    weight: this._randomIntBetween(Y_MIN, Y_MAX)
   };
 };
 
