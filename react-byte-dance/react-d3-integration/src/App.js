@@ -6,8 +6,11 @@ var _ = require('lodash');
 var dataGenerator = require('./dataGenerator');
 
 var Pagination = require('./Pagination');
-var Chart = require('./Chart');
+// var Chart = require('./Chart');
+var Chart = require('./BallChart');
 var Stats = require('./Stats');
+
+
 var ShowHideTooltips = require('./ShowHideTooltips');
 var AddRemoveDatum = require('./AddRemoveDatum');
 
@@ -53,8 +56,9 @@ var App = React.createClass({
       <div className="App">
         <Chart
           appState={this.state}
-          setAppState={this.setAppState} />
+          setAppState={this.setAppState} />          
       </div>
+      
     );
   },
 
