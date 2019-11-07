@@ -29,7 +29,7 @@ ns.update = function(el, state, dispatcher) {
   var scales = this._scales(el, state.domain);
   var prevScales = this._scales(el, state.prevDomain);
   // this._drawPoints(el, scales, state.data, prevScales, dispatcher);
-  this._drawBalls(el, scales, state.data, prevScales, dispatcher);  
+  // this._drawBalls(el, scales, state.data, prevScales, dispatcher);  
 };
 
 ns._scales = function(el, domain) {

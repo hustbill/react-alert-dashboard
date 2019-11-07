@@ -15,7 +15,7 @@ require('./Chart.less');
      this.posY = y; // cy
      this.color = color;
      this.radius = weight; // radius and weight same
-     this.jumpSize = 1; // equivalent of speed default to 1
+     this.jumpSize = 3; // equivalent of speed default to 1
      this.svg = svg; // parent SVG
      this.id = id; // id of ball
      this.aoa = aoa; // initial angle of attack
@@ -70,6 +70,8 @@ require('./Chart.less');
 
     Move() {
           var thisobj = this;
+          var width = 800;
+          var height = 600;
       var svg = thisobj.svg;
 
       //thisobj.posX += Math.cos(thisobj.aoa) * thisobj.jumpSize;
@@ -77,9 +79,13 @@ require('./Chart.less');
 
       thisobj.posX += thisobj.vx;
       thisobj.posY += thisobj.vy;
+    //   console.log(JSON.stringify(svg));
+      //console.log(parseInt(svg.attr('width')));
 
-      if (parseInt(svg.attr('width')) <= (thisobj.posX + thisobj.radius)) {
-        thisobj.posX = parseInt(svg.attr('width')) - thisobj.radius - 1;
+    //   if (parseInt(svg.attr('width')) <= (thisobj.posX + thisobj.radius)) {
+        if (width <= (thisobj.posX + thisobj.radius)) {
+        // thisobj.posX = parseInt(svg.attr('width')) - thisobj.radius - 1;
+        thisobj.posX = width - thisobj.radius - 1;
         thisobj.aoa = Math.PI - thisobj.aoa;
         thisobj.vx = -thisobj.vx;
       }
@@ -90,8 +96,10 @@ require('./Chart.less');
         thisobj.vx = -thisobj.vx;
       }
 
-      if (parseInt(svg.attr('height')) < (thisobj.posY + thisobj.radius)) {
-        thisobj.posY = parseInt(svg.attr('height')) - thisobj.radius - 1;
+    //   if (parseInt(svg.attr('height')) < (thisobj.posY + thisobj.radius)) {
+        if (height < (thisobj.posY + thisobj.radius)) {
+        // thisobj.posY = parseInt(svg.attr('height')) - thisobj.radius - 1;
+        thisobj.posY = height - thisobj.radius - 1;
         thisobj.aoa = 2 * Math.PI - thisobj.aoa;
         thisobj.vy = -thisobj.vy;
       }
@@ -117,8 +125,8 @@ var BallChart = React.createClass({
   getDefaultProps: function() {
       
     return {
-      width: '100%',
-      height: '300px',
+      width: '800px',
+      height: '600px',
       balls: [],
       color: d3.scale.category20()
     };
@@ -138,15 +146,12 @@ var BallChart = React.createClass({
     var svg = this.Initialize(el, 'drawArea');
     var startStopFlag = null;
     this.StartStopGame(startStopFlag);
+   
   },
 
   componentDidUpdate: function(prevProps, prevState) {
     var el = this.getDOMNode();
     d3Chart.update(el, this.getChartState(), this.dispatcher);
-     const containerId = 'drawArea';
-     var svg = this.Initialize(el, 'drawArea'); 
-     var startStopFlag = null;
-     this.StartStopGame(startStopFlag);
   },
 
 
@@ -190,7 +195,8 @@ var BallChart = React.createClass({
 
     //courtsey thanks to several internet sites for formulas
     //detect collision, find intersecting point and set new speed+direction for each ball based on weight (weight=radius)
-    ProcessCollision(ball1, ball2) {
+    ProcessCollision: function(ball1, ball2) {
+        var {balls} = this.props;
 
       if (ball2 <= ball1)
         return;
@@ -216,7 +222,7 @@ var BallChart = React.createClass({
             'fill': 'black'
           })
           .transition()
-          .duration(500)
+          .duration(250)
           .attr('r', 0);
 
         // calculate new velocity of each ball.
@@ -248,7 +254,7 @@ var BallChart = React.createClass({
       }
     },
 
-    CheckCollision(ball1, ball2) {
+    CheckCollision: function(ball1, ball2) {
       var absx = Math.abs(parseFloat(ball2.posX) - parseFloat(ball1.posX));
       var absy = Math.abs(parseFloat(ball2.posY) - parseFloat(ball1.posY));
 
@@ -263,52 +269,31 @@ var BallChart = React.createClass({
     },
 
     Initialize: function(el, containerId) {
-         var svg = d3.select(el).selectAll('.d3-points');
         // var height = document.getElementById(containerId).clientHeight;
-
         // var width = document.getElementById(containerId).clientWidth;
-        var height = "800px";
-        var width = "600px";
-        gContainerId = containerId;
-        gCanvasId = containerId + '_canvas';
-        gTopGroupId = containerId + '_topGroup';
-        // var svg = d3.select("#" + containerId).append("svg")
-        //     .attr("id", gCanvasId)
-        //     .attr("width", width)
-        //     .attr("height", height)
-        //     .append("g")
-        //     .attr("id", gTopGroupId)
-        //     .attr("x", 0)
-        //     .attr("y", 0)
-        //     .attr("width", width)
-        //     .attr("height", height)
-        //     .style("fill", "none")
-        // //.attr("transform", "translate(" + 1 + "," + 1 + ")")
-        // ;
         const {balls} = this.props;
+
+        var svg = d3.select(el).selectAll('.d3-points');
         balls.push(new Ball(svg, 501, 101, 'n1', 'red', Math.PI / 6, 10));
         balls.push(new Ball(svg, 51, 31, 'n2', 'green', Math.PI / 3, 20));
         balls.push(new Ball(svg, 201, 201, 'n3', 'yellow', Math.PI / 9, 30));
         balls.push(new Ball(svg, 91, 31, 'n4', 'orange', Math.PI / 2, 15));
         balls.push(new Ball(svg, 201, 21, 'n5', 'pink', Math.PI + Math.PI / 4, 15));
         balls.push(new Ball(svg, 401, 41, 'n6', 'blue', Math.PI + Math.PI / 7, 25));
-
-        for (var i = 0; i < balls.length; ++i) {
-            console.log("balls[i]: " + JSON.stringify(balls[i]));
-            balls[i].Draw();
-        }
+        // for (var i = 0; i < balls.length; ++i) {
+        //     console.log("balls[i]: " + JSON.stringify(balls[i]));
+        //     balls[i].Draw();
+        // }
         return svg;
     },
 
       
 
   render: function() {
-     
-    //    this.StartStopGame();
     return (
-      <div className="Chart">
+      <div className="Chart" >          
            {/* <a id="startStop" onClick={this.StartStopGame()}>Start</a> | Speed: */}
-          <div id="drawArea"  style={{"width": "960px", "height": "500px", "border": "1px solid grey"}}> </div>
+          {/* <div id="drawArea"  style={{"width": "800px", "height": "600px", "border": "1px solid grey"}}> </div> */}
       </div>
       
     );
