@@ -5,121 +5,10 @@ var _ = require('lodash');
 
 var d3 = require('d3');
 
-var d3Chart = require('./d3Chart');
-
+var Ball = require('./Ball');
 
 require('./Chart.less');
- class Ball {
-   constructor(svg, x, y, id, color, aoa, weight) {
-     this.posX = x; // cx
-     this.posY = y; // cy
-     this.color = color;
-     this.radius = weight; // radius and weight same
-     this.jumpSize = 3; // equivalent of speed default to 1
-     this.svg = svg; // parent SVG
-     this.id = id; // id of ball
-     this.aoa = aoa; // initial angle of attack
-     this.weight = weight;
 
-     if (!this.aoa)
-       this.aoa = Math.PI / 7;
-     if (!this.weight)
-       this.weight = 10;
-     this.radius = this.weight;
-
-     this.data = [this.id]; // allow us to use d3.enter()
-
-     var thisobj = this; // i like to use this instead of this. this many times not reliable particularly handling evnet
-
-     // **** aoa is used only here -- earlier I was using to next move position.
-     // Now aoa and speed together is velocity 
-     this.vx = Math.cos(this.aoa) * this.jumpSize; // velocity x
-     this.vy = Math.sin(this.aoa) * this.jumpSize; // velocity y
-     this.initialVx = this.vx;
-     this.initialVy = this.vy;
-     this.initialPosX = this.posX;
-     this.initialPosY = this.posY;
-   }
-
-    Draw() {
-        var thisobj = this;
-      var svg = thisobj.svg;
-      var ball = svg.selectAll('#' + thisobj.id)
-        .data(thisobj.data);
-      ball.enter()
-        .append("circle")
-        .attr({
-          "id": thisobj.id,
-          'class': 'ball',
-          'r': thisobj.radius,
-          'weight': thisobj.weight
-        })
-        .style("fill", thisobj.color);
-      ball
-        //.transition()//.duration(50)
-        .attr("cx", thisobj.posX)
-        .attr("cy", thisobj.posY);
-      // intersect ball is used to show collision effect - every ball has it's own intersect ball
-      var intersectBall = ball.enter()
-        .append('circle')
-        .attr({
-          'id': thisobj.id + '_intersect',
-          'class': 'intersectBall'
-        });
-    }
-
-    Move() {
-          var thisobj = this;
-          var width = 800;
-          var height = 600;
-      var svg = thisobj.svg;
-
-      //thisobj.posX += Math.cos(thisobj.aoa) * thisobj.jumpSize;
-      //thisobj.posY += Math.sin(thisobj.aoa) * thisobj.jumpSize;
-
-      thisobj.posX += thisobj.vx;
-      thisobj.posY += thisobj.vy;
-    //   console.log(JSON.stringify(svg));
-      //console.log(parseInt(svg.attr('width')));
-
-    //   if (parseInt(svg.attr('width')) <= (thisobj.posX + thisobj.radius)) {
-        if (width <= (thisobj.posX + thisobj.radius)) {
-        // thisobj.posX = parseInt(svg.attr('width')) - thisobj.radius - 1;
-        thisobj.posX = width - thisobj.radius - 1;
-        thisobj.aoa = Math.PI - thisobj.aoa;
-        thisobj.vx = -thisobj.vx;
-      }
-
-      if (thisobj.posX < thisobj.radius) {
-        thisobj.posX = thisobj.radius + 1;
-        thisobj.aoa = Math.PI - thisobj.aoa;
-        thisobj.vx = -thisobj.vx;
-      }
-
-    //   if (parseInt(svg.attr('height')) < (thisobj.posY + thisobj.radius)) {
-        if (height < (thisobj.posY + thisobj.radius)) {
-        // thisobj.posY = parseInt(svg.attr('height')) - thisobj.radius - 1;
-        thisobj.posY = height - thisobj.radius - 1;
-        thisobj.aoa = 2 * Math.PI - thisobj.aoa;
-        thisobj.vy = -thisobj.vy;
-      }
-
-      if (thisobj.posY < thisobj.radius) {
-        thisobj.posY = thisobj.radius + 1;
-        thisobj.aoa = 2 * Math.PI - thisobj.aoa;
-        thisobj.vy = -thisobj.vy;
-      }
-
-      // **** NOT USING AOA except during initilization. Just left this for future reference ***** 
-      if (thisobj.aoa > 2 * Math.PI)
-        thisobj.aoa = thisobj.aoa - 2 * Math.PI;
-      if (thisobj.aoa < 0)
-        thisobj.aoa = 2 * Math.PI + thisobj.aoa;
-
-      thisobj.Draw();
-    }
-
- }
 
 var BallChart = React.createClass({
   getDefaultProps: function() {
@@ -127,6 +16,7 @@ var BallChart = React.createClass({
     return {
       width: '800px',
       height: '600px',
+      containerId: 'gameBoard',
       balls: [],
       color: d3.scale.category20()
     };
@@ -136,22 +26,14 @@ var BallChart = React.createClass({
 
   componentDidMount: function() {
     var el = this.getDOMNode();
-    var dispatcher = d3Chart.create(el, {
-      width: this.props.width,
-      height: this.props.height
-    }, this.getChartState());
-    // dispatcher.on('point:mouseover', this.showTooltip);
-    // dispatcher.on('point:mouseout', this.hideTooltip);
-    this.dispatcher = dispatcher;
-    var svg = this.Initialize(el, 'drawArea');
+    this.Initialize(el, this.props.containerId);
     var startStopFlag = null;
     this.StartStopGame(startStopFlag);
    
   },
 
   componentDidUpdate: function(prevProps, prevState) {
-    var el = this.getDOMNode();
-    d3Chart.update(el, this.getChartState(), this.dispatcher);
+    var el = this.getDOMNode();    
   },
 
 
@@ -269,31 +151,33 @@ var BallChart = React.createClass({
     },
 
     Initialize: function(el, containerId) {
-        // var height = document.getElementById(containerId).clientHeight;
-        // var width = document.getElementById(containerId).clientWidth;
+        var height = document.getElementById(containerId).clientHeight;
+        var width = document.getElementById(containerId).clientWidth;
+        
         const {balls} = this.props;
+          var svg = d3.select("#" + containerId).append('svg') // d3 select div by id
+            .attr('class', 'gameBoard')
+            .attr('width', width)
+            .attr('height', height);
 
-        var svg = d3.select(el).selectAll('.d3-points');
+          svg.append('g')
+            .attr('class', 'd3Balls');
+            
         balls.push(new Ball(svg, 501, 101, 'n1', 'red', Math.PI / 6, 10));
         balls.push(new Ball(svg, 51, 31, 'n2', 'green', Math.PI / 3, 20));
         balls.push(new Ball(svg, 201, 201, 'n3', 'yellow', Math.PI / 9, 30));
         balls.push(new Ball(svg, 91, 31, 'n4', 'orange', Math.PI / 2, 15));
         balls.push(new Ball(svg, 201, 21, 'n5', 'pink', Math.PI + Math.PI / 4, 15));
         balls.push(new Ball(svg, 401, 41, 'n6', 'blue', Math.PI + Math.PI / 7, 25));
-        // for (var i = 0; i < balls.length; ++i) {
-        //     console.log("balls[i]: " + JSON.stringify(balls[i]));
-        //     balls[i].Draw();
-        // }
-        return svg;
-    },
-
-      
+        for (var i = 0; i < balls.length; ++i) {            
+            balls[i].Draw();
+        }
+    },      
 
   render: function() {
     return (
-      <div className="Chart" >          
-           {/* <a id="startStop" onClick={this.StartStopGame()}>Start</a> | Speed: */}
-          {/* <div id="drawArea"  style={{"width": "800px", "height": "600px", "border": "1px solid grey"}}> </div> */}
+      <div className="Chart" >     
+         <div id="gameBoard"  style={{"width": "800px", "height": "600px", "border": "1px solid grey"}}> </div>
       </div>
       
     );

@@ -29,7 +29,11 @@ ns.update = function(el, state, dispatcher) {
   var scales = this._scales(el, state.domain);
   var prevScales = this._scales(el, state.prevDomain);
   // this._drawPoints(el, scales, state.data, prevScales, dispatcher);
-  // this._drawBalls(el, scales, state.data, prevScales, dispatcher);  
+  this._drawBalls(el, state.data, scales, prevScales);
+
+  // var startStopFlag = null;
+  // this.StartStopGame(startStopFlag, el, scales, state.data, prevScales, dispatcher);
+
 };
 
 ns._scales = function(el, domain) {
@@ -100,52 +104,20 @@ ns._drawPoints = function(el, scales, data, prevScales, dispatcher) {
   }
 };
 
-ns._drawBalls = function (el, scales, data, prevScales, dispatcher) {
-  this.Draw(el, scales, data, prevScales);
+ns._drawBalls = function (el, data, scales, prevScales) {
+  // this.Draw(el, data, scales, prevScales);
+  
+  // d3.interval(this.Move(el, data, scales, prevScales), 500);
+  setInterval(this.Move(el, data, scales, prevScales), 500);
+  // d3.interval(function () {
+  //   this.Move(el, data, scales, prevScales);
+  // }, 1500);
+
+  
 }
 
-ns._initBalls = function (data) {
-  let {
-    x,
-    y,
-    id,
-    color,
-    aoa,
-    weight
-  } = data;
-
-  this.posX = x; // cx
-  this.posY = y; // cy
-  this.color = color;
-  this.radius = weight; // radius and weight same
-  this.jumpSize = 1; // equivalent of speed default to 1
-  // this.svg = svg; // parent SVG
-  this.id = id; // id of ball
-  this.aoa = aoa; // initial angle of attack
-  this.weight = weight;
-
-  if (!this.aoa)
-    this.aoa = Math.PI / 7;
-  if (!this.weight)
-    this.weight = 10;
-  this.radius = this.weight;
-
-  this.data = [this.id]; // allow us to use d3.enter()
-
-  var thisobj = this; // i like to use thisobj instead of this. this many times not reliable particularly handling evnet
-
-  // **** aoa is used only here -- earlier I was using to next move position.
-  // Now aoa and speed together is velocity 
-  this.vx = Math.cos(thisobj.aoa) * thisobj.jumpSize; // velocity x
-  this.vy = Math.sin(thisobj.aoa) * thisobj.jumpSize; // velocity y
-  this.initialVx = this.vx;
-  this.initialVy = this.vy;
-  this.initialPosX = this.posX;
-  this.initialPosY = this.posY;
-}
-
-ns.Draw = function(el, scales, data, prevScales) {
-
+ns.Draw = function (el, data, scales, prevScales) {
+ console.log(JSON.stringify(data));
   var g = d3.select(el).selectAll('.d3-points');
 
   var point = g.selectAll('.d3-point')
@@ -203,16 +175,58 @@ ns.destroy = function(el) {
 
 };
 
-ns.Move = function(el, scales, thisobj, prevScales) {
+ns.Move = function (el, thisobj, scales, prevScales) {
+  console.log("move");
+  console.log(JSON.stringify(thisobj));
+  const {
+    x,
+    y,
+    id,
+    color,
+    aoa,
+    weight
+  } = thisobj;
+
+  
+   this.posX = x; // cx
+   this.posY = y; // cy
+   this.color = color;
+   this.radius = weight; // radius and weight same
+   this.jumpSize = 3; // equivalent of speed default to 1
+   this.svg = svg; // parent SVG
+   this.id = id; // id of ball
+   this.aoa = aoa; // initial angle of attack
+   this.weight = weight;
+
+   if (!this.aoa)
+     this.aoa = Math.PI / 7;
+   if (!this.weight)
+     this.weight = 10;
+   this.radius = this.weight;
+
+   this.data = [this.id]; // allow us to use d3.enter()
+
+   // **** aoa is used only here -- earlier I was using to next move position.
+   // Now aoa and speed together is velocity 
+   this.vx = Math.cos(this.aoa) * this.jumpSize; // velocity x
+   this.vy = Math.sin(this.aoa) * this.jumpSize; // velocity y
+   this.initialVx = this.vx;
+   this.initialVy = this.vy;
+   this.initialPosX = this.posX;
+   this.initialPosY = this.posY;
   var svg = d3.select(el).selectAll('.d3-points');
   //thisobj.posX += Math.cos(thisobj.aoa) * thisobj.jumpSize;
   //thisobj.posY += Math.sin(thisobj.aoa) * thisobj.jumpSize;
+  var width = 800;
+  var height = 600;
 
   thisobj.posX += thisobj.vx;
   thisobj.posY += thisobj.vy;
 
-  if (parseInt(svg.attr('width')) <= (thisobj.posX + thisobj.radius)) {
-    thisobj.posX = parseInt(svg.attr('width')) - thisobj.radius - 1;
+  // if (parseInt(svg.attr('width')) <= (thisobj.posX + thisobj.radius)) {
+    // thisobj.posX = parseInt(svg.attr('width')) - thisobj.radius - 1;
+    if (width <= (thisobj.posX + thisobj.radius)) {
+    thisobj.posX =width - thisobj.radius - 1;
     thisobj.aoa = Math.PI - thisobj.aoa;
     thisobj.vx = -thisobj.vx;
   }
@@ -223,8 +237,10 @@ ns.Move = function(el, scales, thisobj, prevScales) {
     thisobj.vx = -thisobj.vx;
   }
 
-  if (parseInt(svg.attr('height')) < (thisobj.posY + thisobj.radius)) {
-    thisobj.posY = parseInt(svg.attr('height')) - thisobj.radius - 1;
+  // if (parseInt(svg.attr('height')) < (thisobj.posY + thisobj.radius)) {    
+  //   thisobj.posY = parseInt(svg.attr('height')) - thisobj.radius - 1;
+   if (height < (thisobj.posY + thisobj.radius)) {
+     thisobj.posY = height - thisobj.radius - 1;
     thisobj.aoa = 2 * Math.PI - thisobj.aoa;
     thisobj.vy = -thisobj.vy;
   }
@@ -242,7 +258,19 @@ ns.Move = function(el, scales, thisobj, prevScales) {
     thisobj.aoa = 2 * Math.PI + thisobj.aoa;
 
   // thisobj.Draw();
-    this.Draw(el, scales, thisobj, prevScales);
+    this.Draw(el, thisobj, scales, prevScales);
 }
+
+// ns.StartStopGame = function () {
+//   if (startStopFlag == null) {
+//     d3.timer(    
+//        this.Move(el, scales, thisobj, prevScales), 500);
+//     startStopFlag = 1;
+//     // document.getElementById('startStop').innerHTML = 'Stop';
+//   } else {
+//     startStopFlag = null;
+//     // document.getElementById('startStop').innerHTML = 'Start';
+//   }
+// }
 
 module.exports = ns;

@@ -10,8 +10,8 @@ require('./Chart.less');
 var Chart = React.createClass({
   getDefaultProps: function() {
     return {
-      width: '100%',
-      height: '300px'
+      width: '800px',
+      height: '600px'
     };
   },
 
@@ -26,6 +26,7 @@ var Chart = React.createClass({
     // dispatcher.on('point:mouseover', this.showTooltip);
     // dispatcher.on('point:mouseout', this.hideTooltip);
     this.dispatcher = dispatcher;
+    
   },
 
   componentDidUpdate: function(prevProps, prevState) {

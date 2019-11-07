@@ -6,8 +6,8 @@ var _ = require('lodash');
 var dataGenerator = require('./dataGenerator');
 
 var Pagination = require('./Pagination');
-// var Chart = require('./Chart');
-var Chart = require('./BallChart');
+var Chart = require('./Chart');
+var BallChart = require('./BallChart');
 var Stats = require('./Stats');
 
 
@@ -28,7 +28,7 @@ var App = React.createClass({
     };
   },
 
-  _allData: dataGenerator.generate(50),
+  _allData: dataGenerator.generate(25),
 
   getData: function(domain) {
     return _.filter(this._allData, this.isInDomain.bind(null, domain));
@@ -54,9 +54,10 @@ var App = React.createClass({
   render: function() {
     return (
       <div className="App">
-        <Chart
+        {/* <Chart
           appState={this.state}
-          setAppState={this.setAppState} />          
+          setAppState={this.setAppState} />           */}
+          <BallChart />
       </div>
       
     );
