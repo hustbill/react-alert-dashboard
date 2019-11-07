@@ -4,6 +4,12 @@
 3. Line chart
 4. Pie chart
 5. Graph
+6. ProcessCollision  
+7. Image / Audio 
+8. 2D, 3D image
+9. DataBase
+10. Cache
+
 
 
 ## Feature list 
