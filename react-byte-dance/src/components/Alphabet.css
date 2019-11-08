@@ -1,0 +1,13 @@
+svg {
+  width: 200px;
+  height: 200px;
+}
+
+svg.canvas {
+  background: red;
+  position: relative;
+}
+
+svg.blue {
+  background: blue;
+}
