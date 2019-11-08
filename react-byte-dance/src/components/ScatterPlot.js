@@ -79,9 +79,7 @@ class ScatterPlot extends Component {
     render() {
         
         return (
-            <div className="container">
-                <svg id="canvas" width={this.props.width} height={this.props.height}></svg>
-            </div>
+            <svg id="canvas" width={this.props.width} height={this.props.height}></svg>           
         );
     }
 }

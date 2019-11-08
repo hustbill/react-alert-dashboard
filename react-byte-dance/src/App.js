@@ -54,10 +54,10 @@ class App extends React.Component {
            this.state.alphabet
          }
          />
-         <div id="scatter-plot" style={{"width": 800, "height": 600, "margin": 20, "border": "5px solid grey"}}>
+         
             <ScatterPlot data0={data0} data1={data1} width={600} height={480}/>    
            <Alphabet alphabet={alphabet} width={600} height={400} x={200} y={600}/>
-         </div>
+         
          
           {/* <Game
           data = {

@@ -3,7 +3,7 @@ svg {
   height: 200px;
 }
 
-svg.canvas {
+svg.red {
   background: red;
   position: relative;
 }
