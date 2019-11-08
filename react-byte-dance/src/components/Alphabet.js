@@ -9,11 +9,13 @@ class Alphabet extends Component {
     constructor(props) {
         super(props);
         this.timer = 0;
+     
 
         this.state = {
             alphabet: "abcdefghijklmnopqrstuvwxyz".split(""),
-            count: 0,
-            timer: new Date()
+            magicNumber: 23,
+            timer: new Date(),
+            g: [],
         }
     }
 
@@ -21,43 +23,22 @@ class Alphabet extends Component {
         var svg = d3.select("#canvas"),
             width = +svg.attr("width"),
             height = +svg.attr("height"),
-            // g = svg.append("g").attr("transform", "translate(32," + (height / 2) + ")");
-            g = svg.append("g").attr("transform", "translate(32," + (height / 2) + ")");
-        
-        // The initial display.
-        var characters = this.makeid();
-        this.update(characters, g);
+            g = svg.append("g").attr("transform", "translate(32," + (height / 2) + ")");       
+        this.setState({          
+            g
+        });
+
+        // Grab a random sample of letters from the alphabet, in alphabetical order.
+        setInterval(
+            () => this.randomMagicNumber(g),
+            1500
+        );
     }
 
-    makeid() {
-        var length = 10;
-        var result = '';
-        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        var charactersLength = characters.length;
-        for (var i = 0; i < length; i++) {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
-        }
-        return result;
-    }
-
-    componentDidUpdate() {
-        // var svg = d3.select("#canvas"),
-        //     width = +svg.attr("width"),
-        //     height = +svg.attr("height"),
-        //     g = svg.append("g").attr("transform", "translate(32," + (height / 2) + ")");
-        // // Grab a random sample of letters from the alphabet, in alphabetical order.
-        // d3.interval(function () {
-        //     this.update(function () {
-        //         var length = 10;
-        //         var result = '';
-        //         var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        //         var charactersLength = characters.length;
-        //         for (var i = 0; i < length; i++) {
-        //             result += characters.charAt(Math.floor(Math.random() * charactersLength));
-        //         }
-        //         return result;
-        //     }, g);
-        // }, 1500);
+    randomMagicNumber = (g) => {
+         this.setState({
+            alphabet: d3.shuffle(this.state.alphabet).slice(0, Math.floor(Math.random() * 26)).sort()
+        });
     }
 
     update(data, g) {
@@ -94,14 +75,27 @@ class Alphabet extends Component {
             .transition(t)
             .attr("y", 0)
             .style("fill-opacity", 1);
+    };
+
+
+    componentDidUpdate() {
+       
+        this.update(this.state.alphabet, this.state.g);
+    }
+    componentWillUnmount() {
+        // clearInterval(this.timerId);
     }
 
+
+    
+
     render() {
-        
         return (
-            <div className="container">
+            <div>
                 <svg id="canvas" width={this.props.width} height={this.props.height}></svg>
             </div>
+                
+            
         );
     }
 }
