@@ -1,13 +1,15 @@
-svg {
-  width: 200px;
-  height: 200px;
+text {
+  font: bold 48px monospace;
 }
 
-svg.red {
-  background: red;
-  position: relative;
+.enter {
+  fill: green;
 }
 
-svg.blue {
-  background: blue;
+.update {
+  fill: #333;
+}
+
+.exit {
+  fill: brown;
 }
