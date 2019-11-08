@@ -40,20 +40,41 @@ class Ball {
         "id": thisobj.id,
         'class': 'ball',
         'r': thisobj.radius,
-        'weight': thisobj.weight
-      })
-      .style("fill", thisobj.color);
+        'weight': thisobj.weight,
+        'fill': thisobj.color,
+        'fill-opacity': 0.85,
+        'stroke': 'yellow'
+      });
+
     ball
-      // .transition().duration(50)
+      .transition().duration(50)
       .attr("cx", thisobj.posX)
       .attr("cy", thisobj.posY);
+    /* Create the text for each block
+  https://stackoverflow.com/questions/13615381/d3-add-text-to-circle
+  */
+  // ball.append("text")
+  //     .text(thisobj.id)
+  //     .attr({
+  //       "class": "update",
+  //       "text-anchor": "middle",
+  //       "font-size": thisobj.weight,
+  //       "x": thisobj.posX,
+  //       'y': thisobj.posY,
+  //       "dy": ".35em",
+  //       'fill': 'red'     
+  //     });
+
+  
+
+
     // intersect ball is used to show collision effect - every ball has it's own intersect ball
-    var intersectBall = ball.enter()
-      .append('circle')
-      .attr({
-        'id': thisobj.id + '_intersect',
-        'class': 'intersectBall'
-      });
+    // var intersectBall = ball.enter()
+    //   .append('circle')
+    //   .attr({
+    //     'id': thisobj.id + '_intersect',
+    //     'class': 'intersectBall'
+    //   });
   }
 
   Move() {

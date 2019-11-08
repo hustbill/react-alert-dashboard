@@ -7,7 +7,7 @@ var d3 = require('d3');
 
 var Ball = require('./Ball');
 
-require('./Chart.less');
+require('./BallChart.less');
 
 
 var BallChart = React.createClass({
