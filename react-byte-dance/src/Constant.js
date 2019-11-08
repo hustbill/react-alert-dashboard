@@ -18,5 +18,5 @@ module.exports = {
         { gpa: 2.89, height: 180 },
         { gpa: 3.75, height: 153 }
     ],
-    alphabet: "abcdefghijklmnopqrstuvwxyz"
+    alphabet: "abcdefghijklmnopqrstuvwxyz".split("")
 }

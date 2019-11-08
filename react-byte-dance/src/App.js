@@ -26,11 +26,27 @@ class App extends React.Component {
       width: 960,
       height: 500,
       id: 'root',
-      alphabet: "abcdefghijklmnopqrstuvwxyz"
+      alphabet
     }
+  }
+
+  componentDidMount() {
+    // Grab a random sample of letters from the alphabet, in alphabetical order.
+    setInterval(
+      () => this.randomMagicNumber(),
+      1500
+    );
+  }
+
+  randomMagicNumber = () => {
+    this.setState({
+      alphabet: d3.shuffle(alphabet).slice(0, Math.floor(Math.random() * 26)).sort()
+    });
   }
   
   render() {
+    const data = d3.shuffle(this.state.alphabet).slice(0, Math.floor(Math.random() * 26)).sort();
+
      return (
       <div className="App"> 
        
@@ -56,7 +72,7 @@ class App extends React.Component {
          />
          
             <ScatterPlot data0={data0} data1={data1} width={600} height={480}/>     */}
-           <Alphabet alphabet={alphabet} width={600} height={400} x={200} y={600}/>
+         <Alphabet data={data} width={600} height={400} x={200} y={600}/>
          
          
           {/* <Game
