@@ -1,5 +1,5 @@
 var React = require('react');
-var Ball =  require('./Ball');
+
 var Store = require('./store');
 
 

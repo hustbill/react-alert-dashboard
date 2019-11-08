@@ -5,156 +5,96 @@ import * as d3 from "d3";
 import { defaultCipherList } from 'constants';
 
 class BytesDance extends Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        data: "abcdefghijklmnopqrstuvwxyz".split("")
-      }
+  constructor(props) {
+    super(props);
+    this.timer = 0;
+
+    this.state = {
+      data: "abcdefghijklmnopqrstuvwxyz".split(""),
+      count: 0,
+      timer: new Date()
     }
+  }
 
-    tick() {
-         var data = this.state.data;
-         d3.shuffle(data);
-         this.setState({data});
-        // if (this.state.data.length > 1) {
-        //   this.setState({
-        //     data: d3.shuffle(this.state.data)
-        //       .slice(0, Math.floor(Math.random() * 26))
-        //       .sort()
-        //   });
-        //   console.log('this.state.data.length' + this.state.data.length);
-        // } else {
-        //   console.log('this.state.data.length' + this.state.data.length);
-        //   this.setState({
-        //     data: "abcdefghijklmnopqrstuvwxyz".split("")
-        //   });
-        // }     
-    }
+  tick() {
+    var data = this.state.data;
+    this.count++;
+    data = data.reverse();
+    data = data.concat + " , count: " + this.count;
+    this.setState({ data });
+  }
 
-    componentDidMount() {
-      // this.timerID = setInterval(
-      //   () => this.tick(), 
-      //   1000
-      // );
-        const data = [2, 4, 2, 6, 8];
-        this.drawBarChart(data);
-       
+  componentDidMount() {
+    // var data = this.state.data;
+    // console.log('componentDidMount data: ' + data); 
+    // data = data.concat('\n hello world');
+    // this.setState({data});
+    this.timer = setTimeout(() => {
+      this.setState({
+        time: new Date()
+      });
+    }, Math.floor(Date.now() / 1000) * 1000 + 1000 - Date.now());
 
-        // Grab a random sample of letters from the alphabet, in alphabetical order.
-        // d3.interval(function () {
-        //   this.update(d3.shuffle(this.state.data)
-        //     .slice(0, Math.floor(Math.random() * 26))
-        //     .sort());
-        // }, 1500);
-    
-          var array = [0, 1, 2, 3, 4, 5, 6];
-          function shuffle(array) {
-            d3.shuffle(array);
-            console.log(array);
-            return array;
-          };
-          array = shuffle(array);
-         this.update(array);      
-      
-    }
+  }
 
-      componentWillUnmount() {
-        clearInterval(this.timerID);
+  componentDidUpdate() {
 
-      }
 
-    componentDidUpdate() {
-       var array = [0, 1, 2, 3, 4, 5, 6];
-         d3.interval(function () {
-           d3.shuffle(array);
-           console.log(array);
-         }, 1500);
-         this.update(array);
-      //  this.drawChart();
-    }
+  }
 
-    drawBarChart(data) {
-      const canvasHeight = 400
-      const canvasWidth = 600
-      const scale = 20
-      const svgCanvas = d3.select(this.refs.canvas)
-        .append("svg")
-        .attr("width", canvasWidth)
-        .attr("height", canvasHeight)
-        .style("border", "1px solid black")
-      svgCanvas.selectAll("rect")
-        .data(data).enter()
-        .append("rect")
-        .attr("width", 40)
-        .attr("height", (datapoint) => datapoint * scale)
-        .attr("fill", "orange")
-        .attr("x", (datapoint, iteration) => iteration * 45)
-        .attr("y", (datapoint) => canvasHeight - datapoint * scale)
-      
-        svgCanvas.selectAll("text")
-          .data(data).enter()
-          .append("text")
-          .attr("x", (dataPoint, i) => i * 45 + 10)
-          .attr("y", (dataPoint, i) => canvasHeight - dataPoint * scale - 10)
-          .text(dataPoint => dataPoint)
-    }
+  generateBallsWithLabel() {
+    var nodesJSONData = {
+      "nodes": [
+        { "x": 80, "r": 40, "label": "Node 1" },
+        { "x": 200, "r": 60, "label": "Node 2" },
+        { "x": 380, "r": 80, "label": "Node 3" }
+      ]
+    };
 
-    update(data) {
-      const w = this.props.width;
-      const h = this.props.height;
+    var width = 960,
+      height = 500;
 
-      // DATA JOIN
-      // Join new data with old elements, if any.
-      // var text = d3.select("svg").attr("transform", "translate(32," + (this.props.height / 2) + ")").selectAll("text")
-      //   .data(data);
+    var svg = d3.select("body").append("svg")
+      .attr("width", width)
+      .attr("height", height)
 
-          // const svg = d3.select("body").append("svg"),
-          const svgBytesDance = d3.select(this.refs.BytesDance).append("svg")
-            .attr("width", w/2)
-            .attr("hight", h/2)
-            .append("g").attr("transform", "translate(32," + (h / 2) + ")");
+    /* Define the data for the circles */
+    var elem = svg.selectAll("g")
+      .data(nodesJSONData.nodes)
 
-      var text = svgBytesDance.attr("transform", "translate(32," + (40 / 2) + ")").selectAll("text")
-        .data(data);
+    /*Create and place the "blocks" containing the circle and the text */
+    var elemEnter = elem.enter()
+      .append("g")
+      .attr("transform", function (d) { return "translate(" + d.x + ",80)" })
 
-      // UPDATE
-      // Update old elements as needed.
-      // text.attr("class", "update");
+    /*Create the circle for each block */
+    var circle = elemEnter.append("circle")
+      .attr("r", function (d) { return d.r })
+      .attr("stroke", "black")
+      .attr("fill", "white")
 
-      // ENTER
-      // Create new elements as needed.
-      //
-      // ENTER + UPDATE
-      // After merging the entered elements with the update selection,
-      // apply operations to both.
-      text.enter().append("text")
-        .attr("class", "enter")
-        .attr("x", function (d, i) {
-          return i * 32;
-        })
-        .attr("dy", ".35em")
-        .merge(text)
-        .text(function (d) {
-          return d;
-        });
+    /* Create the text for each block */
+    elemEnter.append("text")
+      .attr("dx", function (d) { return -20 })
+      .text(function (d) { return d.label });
 
-      // EXIT
-      // Remove old elements as needed.
-      text.exit().remove();
-    }
 
-    render() {
-      return (
-         <div id = {"#" + this.props.id } >
-           <h1> Bytes dance randomly </h1>           
-            <h2> { this.state.data} </h2> 
-            <div ref = "canvas" > </div>
-            <div ref = "BytesDance"></div>
-            {/* <svg width={this.props.width} height={this.props.height}>{ this.state.data} </svg> */}
-         </div>
-      );
-    }
+    return circle;
+  }
 
+  render() {
+    var data = this.state.timer.toLocaleTimeString();
+    var balls = this.generateBallsWithLabel();
+    return (
+      <div id="drawArea">
+        <h1> Bytes dance randomly </h1>
+        <div ref="canvas" > {data} </div>
+        <div ref="BytesDance">
+          
+            </div>
+      </div>
+    );
+  }
 }
 
 
