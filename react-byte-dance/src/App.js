@@ -43,7 +43,7 @@ class App extends React.Component {
         
           {/* <Line path={path(this.state.series1)} color={this.state.color} />         */}
 
-         <BytesDance 
+         {/* <BytesDance 
          width = {
            this.state.width
          }
@@ -55,7 +55,7 @@ class App extends React.Component {
          }
          />
          
-            <ScatterPlot data0={data0} data1={data1} width={600} height={480}/>    
+            <ScatterPlot data0={data0} data1={data1} width={600} height={480}/>     */}
            <Alphabet alphabet={alphabet} width={600} height={400} x={200} y={600}/>
          
          
