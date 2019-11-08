@@ -4,10 +4,13 @@ import * as d3 from "d3";
 
 import logo from './logo.svg';
 import './App.css';
+import {data0, data1, alphabet} from './Constant';
 
 import BytesDance from './components/BytesDance';
-import Line from './components/Line';
-import Chart from './components/Chart';
+import ScatterPlot from './components/ScatterPlot';
+import Alphabet from './components/Alphabet';
+import Game from './components/Game';
+
 
 class App extends React.Component {
   
@@ -51,7 +54,12 @@ class App extends React.Component {
            this.state.alphabet
          }
          />
-          {/* <Chart
+         <div id="scatter-plot" style={{"width": 800, "height": 600, "margin": 20, "border": "5px solid grey"}}>
+            <ScatterPlot data0={data0} data1={data1} width={600} height={480}/>    
+           <Alphabet alphabet={alphabet} width={600} height={400} x={200} y={600}/>
+         </div>
+         
+          {/* <Game
           data = {
             this.state.data
           }
@@ -59,6 +67,7 @@ class App extends React.Component {
             this.state.domain
           }
           /> */}
+          
          {/* <Ball 
          width = {
            this.state.width

@@ -9,7 +9,6 @@ import {
   HashRouter
 } from 'react-router-dom';
 
-var Game = require('./components/game');
 
 
 ReactDOM.render( 
