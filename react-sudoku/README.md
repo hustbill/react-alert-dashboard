@@ -34,3 +34,5 @@ $ npm run buildcss
 [localstorage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
 [less]: http://lesscss.org/
 [lesscleancss]: https://github.com/less/less-plugin-clean-css
+[react-sudoku]:https://github.com/stevendwood/react-sudoku
+
