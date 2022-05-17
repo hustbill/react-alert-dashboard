@@ -5,7 +5,7 @@
     "cuid": "^1.2.4",
     "d3": "^3.4.11",
     "lodash": "^2.4.1",
-    "react": "^0.11.1"
+    "react": "^0.14.0"
   },
   "devDependencies": {
     "css-loader": "^0.7.0",
